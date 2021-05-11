@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+<!-- 标题栏 -->
+{% block bar %}
+<div class="col-md-9" style="justify-content:flex-end;">
+    <h1 class="page-header">作者管理页面</h1>
+    <div class="panel panel-primary">
+        <!-- Default panel contents -->
+        <div class="panel-heading">作者列表<i class="fa fa-thumb-tack pull-right"></i></div>
+        <div class="panel-body">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search for...">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button">搜索</button>
+                    </span>
+                </div><!-- /input-group -->
+            </div><!-- / .col-md-4 -->
+            <div class="col-md-2 pull-right">
+                <a class="btn btn-success" href="/app01/add_author/">新增作者</a>
+
+            </div>
+        </div>
+        <!--</div>-->
+        {% endblock %}
+
+        <!-- 主程序 -->
+        {% block main %}
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <table border="1" class="table table-hover table-bordered">
+                        <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>作者id</th>
+                            <th>作者</th>
+                            <th>邮箱</th>
+                            <th>图书</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for res_dict in ret_list %}
+                        <tr>
+                            <!-- 计数 -->
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ res_dict.author_obj.id }}</td>
+                            <td>{{ res_dict.author_obj.name }}</td>
+                            <td>{{ res_dict.author_obj.email }}</td>
+                            <td>
+                                {% for book_obj in res_dict.book_list %}
+                                {% if forloop.last %}
+                                <!-- 当最后一次循环的时候显示 -->
+                                {{ book_obj.name }}
+                                {% else %}
+                                {{ book_obj.name }}
+                                {% endif %}
+                                {% endfor%}
+                            </td>
+                            <td>
+                                <a href="/app01/edit_author/?id={{ res_dict.author_obj.id }}">修改</a>
+                                <a href="/app01/delete_author/?id={{ res_dict.author_obj.id }}">删除</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+        {% endblock %}
+    </div>
+</div>
+
+<!-- 这是页码 -->
+{% block page %}
+<ul class="pagination">
+
+    <!--{# page_of_books.has_previous #}-->
+    {% if author_objs.has_previous %}
+    <li><a href="?page=1">&laquo; 首页</a></li>
+    <li><a href="?page={{ author_objs.previous_page_number }}">上一页</a></li>
+    {% else %}
+    <li class="previous disabled"><a href="#">上一页</a></li>
+    {% endif %}
+
+    <!-- 全部页码 -->
+    {% for page_num in author_objs.paginator.page_range %}
+    {% if page_num == author_objs.number %}
+    <li class="item active"><a href="?page={{ page_num }}">{{ page_num }}</a></li>
+    {% else %}
+    <li class="item"><a href="?page={{ page_num }}">{{ page_num }}</a></li>
+    {% endif %}
+    {% endfor %}
+
+    {% if author_objs.has_next %}
+    <li><a href="?page={{ author_objs.next_page_number }}">下一页</a></li>
+    <li><a href="?page={{ author_objs.paginator.num_pages }}">尾页 &raquo;</a></li>
+    {% else %}
+    <li class="next disabled"><a href="#">下一页</a></li>
+    {% endif %}
+</ul>
+{% endblock %}
